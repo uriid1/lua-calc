@@ -53,8 +53,8 @@ local info_func = {
     ["cos"] = "Cosine in radians";
     ["tan"] = "Tangent in radians";
 
-    ["deg"] = "From radians to breasts";
-    ["rad"] = "From chests to radians";
+    ["deg"] = "From radians to degrees";
+    ["rad"] = "From degrees to radians";
 
     ["log"] = "log() returns the opposite value. exp(1) returns e";
     ["exp"] = "exp(val) returns e (the base of natural logarithms) raised to the power of val";
@@ -79,7 +79,7 @@ if (not source_str) or (source_str == "") then
 end
 
 if (arg[1] == "-h") or (arg[1] == "-help") then
-    if not arg[2] then
+    if (not arg[2]) then
         for fn, info in pairs(info_func) do
             print(fn .. ' - ' .. info)
         end
@@ -94,7 +94,7 @@ if (arg[1] == "-h") or (arg[1] == "-help") then
 
         return
     else
-        if not info_func[arg[2]] then
+        if (not info_func[arg[2]]) then
             print("Unfortunately, the '"..arg[2].."' function is not available in this calculator.")
             return
         else
@@ -108,7 +108,6 @@ end
 ------------------
 -- Error handler
 ------------------
-
 -- Check nan, inf, -inf
 local check_error_calc = function(v)
     if (v ~= v) or (v == 1/0) or (v == -1/0) then
@@ -119,12 +118,11 @@ end
 -- Check non exists func
 local check_func = function(str)
     for s in string.gmatch(str, "%a+") do
-        if not info_func[s] then
+        if (not info_func[s]) then
             return "Unfortunately, the '"..s.."' function is not available in this calculator."
         end
     end
 end
-
 
 -- Error func
 local error_func = check_func(source_str)
