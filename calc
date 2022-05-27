@@ -1,0 +1,160 @@
+#!/usr/bin/env lua
+
+--[[
+    ####--------------------------------####
+    #--# Author:   by uriid1            #--#
+    #--# License:  GNU GPLv3            #--#
+    #--# Telegram: @main_moderator      #--#
+    #--# E-mail:   appdurov@gmail.com   #--#
+    ####--------------------------------####
+--]]
+
+-- Availible func
+abs=math.abs
+acos=math.acos
+asin=math.asin
+atan=math.atan
+ceil=math.ceil
+cos=math.cos
+deg=math.deg
+exp=math.exp
+floor=math.floor
+huge=math.huge
+log=math.log
+max=math.max
+min=math.min
+pi=math.pi
+rad=math.rad
+random=math.random
+sin=math.sin
+sqrt=math.sqrt
+tan=math.tan
+
+-- User func
+function sign(x) return (x > 0) and 1 or (x == 0 and 0 or -1) end
+function round(x) return (x >= 0) and floor(x + 0.5) or ceil(x - 0.5) end
+
+-- Info of func
+local info_func = {
+    ["huge"] = "Constant. +infinity";
+    ["pi"] = "Constant. Is Pi";
+
+    ["abs"] = "Convert to a positive number";
+
+    ["acos"] = "Inverse cosine, result in radians";
+    ["asin"] = "Inverse sine, result in radians";
+    ["atan"] = "Arc tangent in radians";
+
+    ["ceil"]  = "Rounding up";
+    ["floor"] = "Rounding down";
+    ["round"] = "Rounding to the nearest integer";
+
+    ["sin"] = "Sine in radians";
+    ["cos"] = "Cosine in radians";
+    ["tan"] = "Tangent in radians";
+
+    ["deg"] = "From radians to breasts";
+    ["rad"] = "From chests to radians";
+
+    ["log"] = "log() returns the opposite value. exp(1) returns e";
+    ["exp"] = "exp(val) returns e (the base of natural logarithms) raised to the power of val";
+    ["sqrt"] = "Returns the square root";
+
+    ["max"] = "max(1, 2, 3) will return the maximum number from the given arguments";
+    ["min"] = "Returns the minimum number from the given arguments";
+    
+    ["sign"] = "Will return 1, 0, -1 depending on the original argument";
+    ["random"] = "Generates a pseudo-random number, it is possible to specify a range (1, 10)";
+}
+
+
+------------------
+-- Get arg[1] 
+------------------
+local source_str = arg[1]
+
+if (not source_str) or (source_str == "") then
+    print("Example not included.")
+    return
+end
+
+if (arg[1] == "-h") or (arg[1] == "-help") then
+    if not arg[2] then
+        for fn, info in pairs(info_func) do
+            print(fn .. ' - ' .. info)
+        end
+
+        -- Examples
+        print("\nExamples:")
+        print("calc '(30/100) * 100'")
+        print("calc 'ceil(0.65) * 10'")
+        print("calc 'sin(pi/2)'")
+        print("calc 'abs(-100) / 2'")
+        print("calc 'deg(pi*2)'")
+
+        return
+    else
+        if not info_func[arg[2]] then
+            print("Unfortunately, the '"..arg[2].."' function is not available in this calculator.")
+            return
+        else
+            print(arg[2] .. ' - ' .. info_func[arg[2]])
+            return
+        end
+    end
+end
+
+
+------------------
+-- Error handler
+------------------
+
+-- Check nan, inf, -inf
+local check_error_calc = function(v)
+    if (v ~= v) or (v == 1/0) or (v == -1/0) then
+        return "Error. You are trying to divide a number by 0."
+    end
+end
+
+-- Check non exists func
+local check_func = function(str)
+    for s in string.gmatch(str, "%a+") do
+        if not info_func[s] then
+            return "Unfortunately, the '"..s.."' function is not available in this calculator."
+        end
+    end
+end
+
+
+-- Error func
+local error_func = check_func(source_str)
+if error_func then
+    print(error_func)
+    return
+end
+
+-- Parse
+local parse = function()
+    return (loadstring or load)("return " .. source_str)()
+end
+
+-- If get error
+local ok, error = pcall(parse)
+if (not ok) then
+    print(error)
+    print("Failed to evaluate your expression. You may be using invalid characters.")
+    return
+end
+
+-- Calc
+local v = parse()
+
+-- Error calc
+local error = check_error_calc(v)
+if error then
+    print(error)
+    return
+end
+
+-- Result
+print("Result: " .. v)
