@@ -37,8 +37,8 @@ calc 'deg(pi*2)' <br/>
 1) git clone https://github.com/uriid1/lua-calc/
 2) cd lua-calc
 3) chmod +x install
-4) sudo ./install
+4) sh install
 5) Done! Delele lua-calc folder.
 
 # Uninstall
-sudo rm /usr/bin/calc
+sudo rm ~/.local/bin/calc

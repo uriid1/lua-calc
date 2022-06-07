@@ -10,25 +10,30 @@
 --]]
 
 -- Availible func
-abs=math.abs
-acos=math.acos
-asin=math.asin
-atan=math.atan
-ceil=math.ceil
-cos=math.cos
-deg=math.deg
-exp=math.exp
-floor=math.floor
-huge=math.huge
-log=math.log
-max=math.max
-min=math.min
-pi=math.pi
-rad=math.rad
-random=math.random
-sin=math.sin
-sqrt=math.sqrt
-tan=math.tan
+local fn_names = {
+    abs=math.abs;
+    acos=math.acos;
+    asin=math.asin;
+    atan=math.atan;
+    ceil=math.ceil;
+    cos=math.cos;
+    deg=math.deg;
+    exp=math.exp;
+    floor=math.floor;
+    log=math.log;
+    max=math.max;
+    min=math.min;
+    pi=math.pi;
+    rad=math.rad;
+    random=math.random;
+    sin=math.sin;
+    sqrt=math.sqrt;
+    tan=math.tan;
+    round=round;
+    sign=sign;
+    pow=math.pow;
+    log10=math.log10;
+}
 
 -- User func
 function sign(x) return (x > 0) and 1 or (x == 0 and 0 or -1) end
@@ -36,8 +41,8 @@ function round(x) return (x >= 0) and floor(x + 0.5) or ceil(x - 0.5) end
 
 -- Info of func
 local info_func = {
-    ["huge"] = "Constant. +infinity";
     ["pi"] = "Constant. Is Pi";
+    ["%"] = "Remainder";
 
     ["abs"] = "Convert to a positive number";
 
@@ -57,6 +62,7 @@ local info_func = {
     ["rad"] = "From degrees to radians";
 
     ["log"] = "log() returns the opposite value. exp(1) returns e";
+    ["log10"] = "log10(val) Common logarithm";
     ["exp"] = "exp(val) returns e (the base of natural logarithms) raised to the power of val";
     ["sqrt"] = "Returns the square root";
 
@@ -133,7 +139,7 @@ end
 
 -- Parse
 local parse = function()
-    return (loadstring or load)("return " .. source_str)()
+    return (loadstring or load)("return " .. source_str, nil, nil, fn_names)()
 end
 
 -- If get error
@@ -147,6 +153,10 @@ end
 -- Calc
 local v = parse()
 
+if (v == nil) then
+    return
+end
+
 -- Error calc
 local error = check_error_calc(v)
 if error then
@@ -155,4 +165,4 @@ if error then
 end
 
 -- Result
-print("Result: " .. v)
+print("Result: " .. tostring(v))

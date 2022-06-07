@@ -5,12 +5,5 @@ pname='calc'
 
 # Install
 chmod +x $pname
-sudo cp $pname /usr/bin
-
-# Check
-if [ -e /usr/bin/$pname ]
-then
-    echo "$pname installed successfully!"
-else
-    echo -e "You may have entered the wrong password. \n Either $pname is already installed."
-fi
+cp $pname ~/.local/bin/
+echo "$pname installed successfully in ~/.local/bin/"
