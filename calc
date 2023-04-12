@@ -1,0 +1,241 @@
+#!/usr/bin/env lua
+
+--[[
+    ####--------------------------------####
+    #--# Author:   by uriid1            #--#
+    #--# License:  GNU GPLv3            #--#
+    #--# Telegram: @main_moderator      #--#
+    #--# E-mail:   appdurov@gmail.com   #--#
+    ####--------------------------------####
+--]]
+
+local stdout = io.stdout
+local stdin = io.stdin
+
+local info = [[
+Usage:
+-i | --integer
+    Converting the result to a decimal number
+
+-c | --console-output
+    Console output
+
+Functions:
+pi - Constant. Is Pi
+% - Remainder
+
+abs - Convert to a positive number
+
+acos - Inverse cosine, result in radians
+asin - Inverse sine, result in radians
+atan - Arc tangent in radians
+
+ceil - Rounding up
+floor - Rounding down
+round - Rounding to the nearest integer
+
+sin - Sine in radians
+cos - Cosine in radians
+tan - Tangent in radians
+
+deg - "From radians to degrees
+rad - "From degrees to radians
+
+log - log() returns the opposite value. exp(1) returns e
+log10 - log10(val) Common logarithm
+exp - exp(val) returns e (the base of natural logarithms) raised to the power of val
+sqrt - Returns the square root
+
+max - max(1, 2, 3) will return the maximum number from the given arguments
+min - Returns the minimum number from the given arguments
+
+sign - Will return 1, 0, -1 depending on the original argument
+random - Generates a pseudo-random number, it is possible to specify a range (1, 10)
+
+Examples:
+calc '(30/100) * 100'
+calc 'ceil(0.65) * 10'
+calc 'sin(pi/2)'
+calc 'deg(pi*2)'
+calc -i 'abs(-100) / 2'
+]]
+
+local args_type = {
+    HELP = 'help';
+    TO_INTEGER = 'integer';
+    CONSOLE_OUTPUT = 'console-output';
+}
+
+local args = {
+    [args_type.HELP] = {'-h', '--help', 'help'};
+    [args_type.TO_INTEGER] = {'-i', '--integer'};
+    [args_type.CONSOLE_OUTPUT] = {'-c', '--console-output'};
+}
+
+local function find_arg(source)
+    for k, _ in pairs(args) do
+        if type(args[k]) == 'table' then
+            for i = 1, #args[k] do
+                if args[k][i] == source then
+                    return k
+                end
+            end
+        end
+
+        if args[k] == source then
+            return k
+        end
+    end
+
+    return nil
+end
+
+
+-- Input
+--
+local function input(text)
+    stdout:write(text)
+    return stdin:read()
+end
+
+-- Availible func
+--
+local avalible_function = {
+    abs = math.abs;
+    acos = math.acos;
+    asin = math.asin;
+    atan = math.atan;
+    ceil = math.ceil;
+    cos = math.cos;
+    deg = math.deg;
+    exp = math.exp;
+    floor = math.floor;
+    log = math.log;
+    max = math.max;
+    min = math.min;
+    pi = math.pi;
+    rad = math.rad;
+    random = math.random;
+    sin = math.sin;
+    sqrt = math.sqrt;
+    tan = math.tan;
+
+    round = function (x)
+        return (x >= 0) and math.floor(x + 0.5) or math.ceil(x - 0.5)
+    end;
+    
+    sign = function (x)
+        return (x > 0) and 1 or (x == 0 and 0 or -1)
+    end;
+
+    pow = math.pow;
+    log10 = math.log10;
+}
+
+
+-- Class calc
+--
+local calc = {
+    console_output = false;
+    to_integer = false;
+}
+
+function calc:check_error(val)
+    if (val ~= val) or (val == 1/0) or (val == -1/0) then
+        return "Error. You are trying to divide a number by 0."
+    end
+end
+
+function calc:check_func(source)
+    for s in string.gmatch(source, "%a+") do
+        if not avalible_function[s] then
+            return "Unfortunately, the '"..s.."' function is not available in this calculator."
+        end
+    end
+end
+
+function calc:parse(source)
+    --
+    local err = self:check_func(source)
+
+    if err then
+        return stdout:write(err, '\n')
+    end
+
+    -- Exec
+    local res
+    local fn_res = (loadstring or load)("return " .. source, nil, nil, avalible_function)
+    
+    -- Protected call
+    do
+        local ok, err = pcall(fn_res)
+
+        if ok then
+            res = fn_res()
+        else
+            stdout:write(
+                err, '\n', 
+                "Failed to evaluate your expression. You may be using invalid characters.", '\n'
+            )
+            return
+        end
+    end
+
+    --
+    local err = self:check_error(res)
+
+    if err then
+        stdout:write(err, '\n')
+        return
+    end
+
+    -- Return
+    --
+    if self.to_integer then
+        res = math.floor(res)
+    end
+
+    if self.console_output then
+        return stdout:write(tostring(res))
+    end
+    
+    return stdout:write("= "..tostring(res), '\n\n')
+end
+
+-- Run calc
+--
+local inp = ''
+
+while true do
+    -- Args pars
+    for i = 1, #arg do
+        local current = find_arg(arg[i])
+        
+        if current == args_type.HELP then
+            return stdout:write(info)
+        elseif current == args_type.CONSOLE_OUTPUT then
+            calc.console_output = true
+        elseif current == args_type.TO_INTEGER then
+            calc.to_integer = true
+        end
+    end
+
+    if calc.console_output then
+        return calc:parse(arg[#arg])
+    end
+
+    -- Set loop
+    inp = input('> ')
+
+    -- Exit programm
+    if inp == 'q' or inp == 'exit' then
+        os.exit(0)
+    end
+
+    -- Print help
+    if inp == args_type.HELP then
+        stdout:write(info)
+    end
+
+    calc:parse(inp)
+end
