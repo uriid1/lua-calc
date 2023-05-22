@@ -38,8 +38,8 @@ sin - Sine in radians
 cos - Cosine in radians
 tan - Tangent in radians
 
-deg - "From radians to degrees
-rad - "From degrees to radians
+deg - From radians to degrees
+rad - From degrees to radians
 
 log - log() returns the opposite value. exp(1) returns e
 log10 - log10(val) Common logarithm
@@ -196,7 +196,7 @@ function calc:parse(source)
     end
 
     if self.console_output then
-        return stdout:write(tostring(res))
+        return stdout:write(tostring(res), '\n')
     end
     
     return stdout:write("= "..tostring(res), '\n\n')

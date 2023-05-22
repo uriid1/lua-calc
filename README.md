@@ -27,8 +27,8 @@ sin - Sine in radians
 cos - Cosine in radians
 tan - Tangent in radians
 
-deg - "From radians to degrees
-rad - "From degrees to radians
+deg - From radians to degrees
+rad - From degrees to radians
 
 log - log() returns the opposite value. exp(1) returns e
 log10 - log10(val) Common logarithm
@@ -42,10 +42,10 @@ sign - Will return 1, 0, -1 depending on the original argument
 random - Generates a pseudo-random number, it is possible to specify a range (1, 10)
 
 Examples:
-calc '(30/100) * 100'
-calc 'ceil(0.65) * 10'
-calc 'sin(pi/2)'
-calc 'deg(pi*2)'
+calc -c '(30/100) * 100'
+calc -c 'ceil(0.65) * 10'
+calc -c 'sin(pi/2)'
+calc -c 'deg(pi*2)'
 calc -i 'abs(-100) / 2'
 ```
 
